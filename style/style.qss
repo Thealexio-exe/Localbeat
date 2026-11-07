@@ -14,3 +14,7 @@ QToolButton#bt_onl, QToolButton#bt_offl {
     font-size: 20px;
     padding: 20px;
 }
+
+QFrame#nav_bar {
+    border-bottom: 5px solid #ce3535;
+}

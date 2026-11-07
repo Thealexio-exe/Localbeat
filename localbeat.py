@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout
+from PySide6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
@@ -18,16 +18,31 @@ class MainFrame(QMainWindow):
         # nome app 
         self.setWindowTitle("LocalBeat")
 
-
         # auto regolamento tasti
         screen = self.screen().availableGeometry()
         lato_corto = min(screen.width(), screen.height())
         lato = max(150, int(lato_corto * 0.25))
         
         # box per i bottoni
-        central = QWidget()
-        self.setCentralWidget(central)
-        layout = QVBoxLayout(central)
+        self.central = QWidget()
+        self.stack = QStackedWidget()
+        
+        # box barra
+        self.nav_bar = QFrame()
+        self.nav_bar.setObjectName("nav_bar")
+        nav_layout = QHBoxLayout(self.nav_bar)
+        self.bt_back = QPushButton("Indietro")
+        nav_layout.addWidget(self.bt_back)
+        nav_layout.addStretch()
+
+        container = QWidget()
+        main_layout = QVBoxLayout(container)
+        main_layout.addWidget(self.nav_bar)
+        main_layout.addWidget(self.stack, 1)
+        self.setCentralWidget(container)
+
+        self.stack.addWidget(self.central)
+        layout = QVBoxLayout(self.central)
         top_bar = QHBoxLayout()
 
         # layout e bottoni inizializati
@@ -40,22 +55,22 @@ class MainFrame(QMainWindow):
         self.bt_offline.setObjectName("bt_offl")
         self.bt_online.setObjectName("bt_onl")
 
-        for btn in (self.bt_online, self.bt_offline):
-            btn.setFixedSize(lato, lato)
-            btn.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        for bt in (self.bt_online, self.bt_offline):
+            bt.setFixedSize(lato, lato)
+            bt.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
 
 
-            if btn is self.bt_online:
-                btn.setIcon(QIcon(str(icon_online)))
+            if bt is self.bt_online:
+                bt.setIcon(QIcon(str(icon_online)))
             else:
-                btn.setIcon(QIcon(str(icon_offline)))
+                bt.setIcon(QIcon(str(icon_offline)))
 
-            btn.setIconSize(QSize(lato // 2, lato // 2))
-
+            bt.setIconSize(QSize(lato // 2, lato // 2))
 
         # visualiza a scermo i pulsanti e il layout
         layout.addStretch()
         top_bar.addStretch()
+
         top_bar.addWidget(self.bt_online)
         top_bar.addWidget(self.bt_offline)
         top_bar.addStretch()
@@ -63,6 +78,24 @@ class MainFrame(QMainWindow):
 
         layout.addLayout(top_bar)
         layout.addStretch()
+
+        # creo la seconda pagina
+        self.local_page = QWidget()
+        local_layout = QVBoxLayout(self.local_page)
+        local_layout.addWidget(QLabel("Schermata Local"))
+        self.stack.addWidget(self.local_page)
+
+        # interazione pulsante
+        self.bt_offline.clicked.connect(self.local_click)
+
+
+    def local_click(self):
+        self.stack.setCurrentWidget(self.local_page)
+
+        self.bt_back.clicked.connect(self.back)
+
+    def back(self):
+        self.stack.setCurrentWidget(self.central)
         
 
 if __name__ == "__main__":
