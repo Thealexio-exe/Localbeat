@@ -1,0 +1,16 @@
+QToolButton {
+    background-color: #3b3a3a;
+    color: white;
+    border-radius: 24px;
+    font-weight: bold;
+}
+
+QToolButton:hover {
+    background-color: #444444;
+}
+
+QToolButton#bt_onl, QToolButton#bt_offl {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 20px;
+    padding: 20px;
+}
