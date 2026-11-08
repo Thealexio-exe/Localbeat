@@ -31,12 +31,18 @@ class MainFrame(QMainWindow):
         self.nav_bar = QFrame()
         self.nav_bar.setObjectName("nav_bar")
         nav_layout = QHBoxLayout(self.nav_bar)
-        self.bt_back = QPushButton("Indietro")
+
+        # pulsate back
+        
+        self.bt_back = QPushButton("<")
+        self.bt_back.setFixedSize(30, 30)
         nav_layout.addWidget(self.bt_back)
+
         nav_layout.addStretch()
 
         container = QWidget()
         main_layout = QVBoxLayout(container)
+        main_layout.setContentsMargins(0,0,0,0)
         main_layout.addWidget(self.nav_bar)
         main_layout.addWidget(self.stack, 1)
         self.setCentralWidget(container)
@@ -90,9 +96,8 @@ class MainFrame(QMainWindow):
 
 
     def local_click(self):
-        self.stack.setCurrentWidget(self.local_page)
-
         self.bt_back.clicked.connect(self.back)
+        self.stack.setCurrentWidget(self.local_page)
 
     def back(self):
         self.stack.setCurrentWidget(self.central)
