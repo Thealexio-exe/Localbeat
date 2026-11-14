@@ -85,22 +85,41 @@ class MainFrame(QMainWindow):
         layout.addLayout(top_bar)
         layout.addStretch()
 
-        # creo la seconda pagina
-        self.local_page = QWidget()
-        local_layout = QVBoxLayout(self.local_page)
-        local_layout.addWidget(QLabel("Schermata Local"))
-        self.stack.addWidget(self.local_page)
+        # seconda pagina || pagina home-Playlist 
+        self.Play_list_pg = QWidget()
+        page_layout = QVBoxLayout(self.Play_list_pg)
+        self.PlayList_box = QVBoxLayout()
+        page_layout.addLayout(self.PlayList_box)
+        page_layout.addStretch()
+        self.stack.addWidget(self.Play_list_pg)
+
+        # questa parte serve ha creare la barra crea-playlist, non sarà facile
+        self.bt_add_playlist = QPushButton("+   Crea playlist")
+        self.bt_add_playlist.setObjectName("add_playlist")
+        self.bt_add_playlist.setFixedHeight(70)
+        self.PlayList_box.addWidget(self.bt_add_playlist)
+
 
         # interazione pulsante
         self.bt_offline.clicked.connect(self.local_click)
+        self.bt_back.clicked.connect(self.back)
+        self.bt_add_playlist.clicked.connect(self.crea_playlist)
+        self.stack.currentChanged.connect(self.aggiorna_nav)
+        self.aggiorna_nav()
 
 
     def local_click(self):
-        self.bt_back.clicked.connect(self.back)
-        self.stack.setCurrentWidget(self.local_page)
+        self.stack.setCurrentWidget(self.Play_list_pg)
 
     def back(self):
         self.stack.setCurrentWidget(self.central)
+
+    def aggiorna_nav(self):
+        home = self.stack.currentWidget() is self.central
+        self.bt_back.setEnabled(not home)
+
+    def crea_playlist(self):
+        print("Test funziona")
         
 
 if __name__ == "__main__":
