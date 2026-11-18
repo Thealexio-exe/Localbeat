@@ -11,7 +11,7 @@ QToolButton:hover {
 
 QToolButton#bt_onl, QToolButton#bt_offl {
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 20px;
+    font-size: 15pt;
     padding: 20px;
 }
 
@@ -32,7 +32,7 @@ QFrame#nav_bar QPushButton {
     border-radius: 6px;
 
     color: #ffffff;
-    font-size: 18px;
+    font-size: 14pt;
     font-weight: bold;
 }
 
@@ -46,7 +46,7 @@ QFrame#nav_bar QPushButton:disabled {
 }
 
 
-QPushButton#add_playlist {
+QPushButton#add_playlist, QPushButton#playlist_bt {
     background-color: #3b3a3a;
     color: white;
     border: none;
@@ -57,6 +57,6 @@ QPushButton#add_playlist {
     font-weight: bold;
 }
 
-QPushButton#add_playlist:hover {
+QPushButton#add_playlist:hover, QPushButton#playlist_bt:hover {
     background-color: #444444;
 }

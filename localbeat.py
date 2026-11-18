@@ -1,8 +1,11 @@
-import sys
-from PySide6.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
+from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QInputDialog, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
+from datetime import datetime
+import sys
+from File_json import crea_json
+
 
 class MainFrame(QMainWindow):
     def __init__(self):
@@ -11,6 +14,8 @@ class MainFrame(QMainWindow):
         # HEADER
         icon_online = Path(__file__).parent / "asset" / "icon" / "online.svg"
         icon_offline = Path(__file__).parent / "asset" / "icon" / "offline.svg"
+        self.playlists_dir = Path(__file__).parent / "playlists"
+        self.playlists_dir.mkdir(exist_ok=True)
 
         style_path = Path(__file__).parent / "style" / "style.qss"
         app.setStyleSheet(style_path.read_text(encoding="utf-8"))
@@ -88,16 +93,26 @@ class MainFrame(QMainWindow):
         # seconda pagina || pagina home-Playlist 
         self.Play_list_pg = QWidget()
         page_layout = QVBoxLayout(self.Play_list_pg)
-        self.PlayList_box = QVBoxLayout()
-        page_layout.addLayout(self.PlayList_box)
-        page_layout.addStretch()
+
+        
+        lista = QWidget()
+        self.PlayList_box = QVBoxLayout(lista)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setFrameShape(QFrame.Shape.NoFrame)
+        scroll.setWidget(lista)
+        page_layout.addWidget(scroll)
+
         self.stack.addWidget(self.Play_list_pg)
+        
 
         # questa parte serve ha creare la barra crea-playlist, non sarà facile
         self.bt_add_playlist = QPushButton("+   Crea playlist")
         self.bt_add_playlist.setObjectName("add_playlist")
         self.bt_add_playlist.setFixedHeight(70)
         self.PlayList_box.addWidget(self.bt_add_playlist)
+        self.PlayList_box.addStretch()
 
 
         # interazione pulsante
@@ -119,7 +134,31 @@ class MainFrame(QMainWindow):
         self.bt_back.setEnabled(not home)
 
     def crea_playlist(self):
-        print("Test funziona")
+        nome, Pass = QInputDialog.getText(self, "Nuova play list", "Inserisci nome: ")
+        nome = nome.strip()
+        
+        if not nome or not Pass:
+            return
+        elif any(c in nome for c in '\\/:*?"<>|'):
+            QMessageBox.warning(self, "Errore", 'Non inserire questi caratteri Pls: \\ / : * ? " < > |')
+            return
+
+        cartella = self.playlists_dir / nome
+        if cartella.exists():
+            QMessageBox.warning(self, "Errore", "Esiste di già una play list con lo stesso nome")
+            return
+
+        cartella.mkdir()
+        crea_json(nome, cartella)
+
+        self.Crea_riga(nome)
+
+        
+    def Crea_riga(self, nome):
+        riga = QPushButton(nome)
+        riga.setObjectName("playlist_bt")
+        riga.setFixedHeight(70)
+        self.PlayList_box.insertWidget(0, riga)
         
 
 if __name__ == "__main__":
