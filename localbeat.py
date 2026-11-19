@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QInputDialog, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
+from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
@@ -10,24 +10,24 @@ class MainFrame(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # HEADER
+        # HEADER e file caricati
         icon_online = Path(__file__).parent / "asset" / "icon" / "online.svg"
         icon_offline = Path(__file__).parent / "asset" / "icon" / "offline.svg"
+        ico_main = Path(__file__).parent / "asset" / "ico" / "offline.ico"
         self.playlists_dir = Path(__file__).parent / "playlist"
         self.playlists_dir.mkdir(exist_ok=True)
 
         style_path = Path(__file__).parent / "style"
-        files_style_path = ["style.qss", "style_dialogo.qss"]
 
         trovati = ""
-
-        for f in files_style_path:
-            trovati += (style_path / f).read_text(encoding="utf-8")
+        for f in sorted(style_path.glob("*.qss")):
+            trovati += f.read_text(encoding="utf-8") + "\n"
 
         app.setStyleSheet(trovati)
-        
-        # nome app 
+
+        # App
         self.setWindowTitle("LocalBeat")
+        self.setWindowIcon(QIcon(str(ico_main)))
 
         # auto regolamento tasti
         screen = self.screen().availableGeometry()

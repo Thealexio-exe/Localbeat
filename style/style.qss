@@ -11,11 +11,6 @@ QStackedWidget {
     background-color: #202020;
 }
 
-QInputDialog {
-    background-color: #ffffff
-}
-
-
 QScrollArea {
     background-color: #202020;
     border: none;
