@@ -2,10 +2,9 @@ from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QInputDia
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
-from datetime import datetime
+from dialogo_playlist import PlaylistDialog
+from File_json import crea_json, leggi_json
 import sys
-from File_json import crea_json
-
 
 class MainFrame(QMainWindow):
     def __init__(self):
@@ -14,12 +13,19 @@ class MainFrame(QMainWindow):
         # HEADER
         icon_online = Path(__file__).parent / "asset" / "icon" / "online.svg"
         icon_offline = Path(__file__).parent / "asset" / "icon" / "offline.svg"
-        self.playlists_dir = Path(__file__).parent / "playlists"
+        self.playlists_dir = Path(__file__).parent / "playlist"
         self.playlists_dir.mkdir(exist_ok=True)
 
-        style_path = Path(__file__).parent / "style" / "style.qss"
-        app.setStyleSheet(style_path.read_text(encoding="utf-8"))
+        style_path = Path(__file__).parent / "style"
+        files_style_path = ["style.qss", "style_dialogo.qss"]
 
+        trovati = ""
+
+        for f in files_style_path:
+            trovati += (style_path / f).read_text(encoding="utf-8")
+
+        app.setStyleSheet(trovati)
+        
         # nome app 
         self.setWindowTitle("LocalBeat")
 
@@ -121,8 +127,9 @@ class MainFrame(QMainWindow):
         self.bt_add_playlist.clicked.connect(self.crea_playlist)
         self.stack.currentChanged.connect(self.aggiorna_nav)
         self.aggiorna_nav()
+        self.carica_playlist()
 
-
+    # semplici funzioni per far funzionare i tasti e cambiare pagina
     def local_click(self):
         self.stack.setCurrentWidget(self.Play_list_pg)
 
@@ -133,11 +140,14 @@ class MainFrame(QMainWindow):
         home = self.stack.currentWidget() is self.central
         self.bt_back.setEnabled(not home)
 
+    # funzioni più lunghe, qesta crea l'intera playlist
     def crea_playlist(self):
-        nome, Pass = QInputDialog.getText(self, "Nuova play list", "Inserisci nome: ")
-        nome = nome.strip()
-        
-        if not nome or not Pass:
+        dialog = PlaylistDialog(self)
+        if not dialog.exec():
+            return
+
+        nome = dialog.nome()
+        if not nome:
             return
         elif any(c in nome for c in '\\/:*?"<>|'):
             QMessageBox.warning(self, "Errore", 'Non inserire questi caratteri Pls: \\ / : * ? " < > |')
@@ -152,6 +162,21 @@ class MainFrame(QMainWindow):
         crea_json(nome, cartella)
 
         self.Crea_riga(nome)
+
+    def carica_playlist(self):
+        pl_trovate = []
+
+        for cartelle_pl in self.playlists_dir.iterdir():
+            if not cartelle_pl.is_dir():
+                continue
+            dati = leggi_json(cartelle_pl)
+            if dati is None:
+                continue
+            pl_trovate.append((dati.get("creata", ""), dati.get("nome", cartelle_pl.name)))
+
+        pl_trovate.sort()
+        for _, nome in pl_trovate:
+            self.Crea_riga(nome)
 
         
     def Crea_riga(self, nome):

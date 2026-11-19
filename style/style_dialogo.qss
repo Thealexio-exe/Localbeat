@@ -1,0 +1,41 @@
+QDialog#dialog_playlist {
+    background-color: #2b2b2b;
+}
+
+QDialog#dialog_playlist QLabel#dialog_title {
+    color: white;
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+QDialog#dialog_playlist QLineEdit {
+    background-color: #3b3a3a;
+    color: white;
+    border: 1px solid #555555;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12pt;
+}
+
+QDialog#dialog_playlist QLineEdit:focus {
+    border: 1px solid #ffffff;
+}
+
+QDialog#dialog_playlist QPushButton {
+    background-color: #3b3a3a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+QDialog#dialog_playlist QPushButton:hover {
+    background-color: #444444;
+}
+
+QDialog#dialog_playlist QPushButton#bt_crea {
+    background-color: #ffffff;
+    color: #000000;
+}

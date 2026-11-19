@@ -71,10 +71,21 @@ QFrame#nav_bar QPushButton:disabled {
 }
 
 
-QPushButton#add_playlist, QPushButton#playlist_bt {
+QPushButton#add_playlist {
     background-color: #3b3a3a;
     color: white;
     border: none;
+    border-radius: 12px;
+    text-align: left;
+    padding-left: 24px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+QPushButton#playlist_bt {
+    background-color: #292929;
+    color: white;
+    border: 1px solid #ff000000;
     border-radius: 12px;
     text-align: left;
     padding-left: 24px;

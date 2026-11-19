@@ -10,3 +10,11 @@ def crea_json(nome, posizione):
     }
 
     (posizione / "playlist.json").write_text(json.dumps(dati, ensure_ascii=False, indent=2), encoding="utf-8")
+
+def leggi_json(posizione):
+    file = posizione / "playlist.json"
+    try:
+        return json.loads(file.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as er:
+        print(er)
+        return None
