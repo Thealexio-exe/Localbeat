@@ -1,8 +1,8 @@
-from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QMessageBox, QScrollArea, QMainWindow, QVBoxLayout, QWidget, QToolButton, QHBoxLayout, QStackedWidget, QLabel, QPushButton ,QFrame)
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
-from logic.File_json import crea_json, leggi_json
+from logic.File_json import crea_json, leggi_json, carica_impostazioni, salva_impostazioni
 from UI.dialogo_playlist import PlaylistDialog
 import sys
 
@@ -14,7 +14,7 @@ class MainFrame(QMainWindow):
         icon_online = Path(__file__).parent / "asset" / "icon" / "online.svg"
         icon_offline = Path(__file__).parent / "asset" / "icon" / "offline.svg"
         ico_main = Path(__file__).parent / "asset" / "ico" / "offline.ico"
-        json_main = Path(__file__).parent / "data" / "main_json.json"
+        self.json_main = Path(__file__).parent / "data" / "main_json.json"
         self.playlists_dir = Path(__file__).parent / "data" / "playlist"
         self.playlists_dir.mkdir(parents=True, exist_ok=True)
 
@@ -110,6 +110,9 @@ class MainFrame(QMainWindow):
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setWidget(lista)
 
+        self.ordine = carica_impostazioni(self.json_main)
+        self.righe = []
+
         # menu a sinistra, rimove la scroll area
         self.side_menu = QFrame()
         self.side_menu.setObjectName("side_menu")
@@ -124,15 +127,22 @@ class MainFrame(QMainWindow):
         titolo_Mn_ordine.setObjectName("side_title_bt")
         box_ord_layout.addWidget(titolo_Mn_ordine)
 
+        self.gruppo_ordine = QButtonGroup(self)
         self.bt_ordine = {}
         for testo, chiave in (("Data di creazione (crescente)", "creazione_asc"),
-                      ("Data di creazione (decresciente)", "creazione_desc"),
+                      ("Data di creazione (decrescente)", "creazione_desc"),
                       ("Ordine alfabetico", "alfabetico"),
                       ("Ultimo ascolto", "ultimo_ascolto")):
             bt = QPushButton(testo)
             bt.setObjectName("bt_ordine")
+            bt.setCheckable(True)
+            bt.setProperty("chiave", chiave)
             box_ord_layout.addWidget(bt)
+            self.gruppo_ordine.addButton(bt)
             self.bt_ordine[chiave] = bt
+
+        self.bt_ordine[self.ordine].setChecked(True)
+        self.bt_ordine["ultimo_ascolto"].setEnabled(False)
 
         side_layout.addWidget(box_ordine_bt)
         side_layout.addStretch()
@@ -157,6 +167,7 @@ class MainFrame(QMainWindow):
         self.bt_back.clicked.connect(self.back)
         self.bt_add_playlist.clicked.connect(self.crea_playlist)
         self.stack.currentChanged.connect(self.aggiorna_nav)
+        self.gruppo_ordine.buttonClicked.connect(self.ordine_cliccato)
         self.aggiorna_nav()
         self.carica_playlist()
 
@@ -170,6 +181,10 @@ class MainFrame(QMainWindow):
     def aggiorna_nav(self):
         home = self.stack.currentWidget() is self.central
         self.bt_back.setEnabled(not home)
+
+    def ordine_cliccato(self, bt):
+        self.ordine = bt.property("chiave")
+        self.carica_playlist()
 
     # funzioni più lunghe, qesta crea l'intera playlist
     def crea_playlist(self):
@@ -192,9 +207,15 @@ class MainFrame(QMainWindow):
         cartella.mkdir()
         crea_json(nome, cartella)
 
-        self.Crea_riga(nome)
+        self.carica_playlist()
 
     def carica_playlist(self):
+
+        for r in self.righe:
+            self.PlayList_box.removeWidget(r)
+            r.deleteLater()
+        self.righe.clear()
+
         pl_trovate = []
 
         for cartelle_pl in self.playlists_dir.iterdir():
@@ -205,16 +226,27 @@ class MainFrame(QMainWindow):
                 continue
             pl_trovate.append((dati.get("creata", ""), dati.get("nome", cartelle_pl.name)))
 
-        pl_trovate.sort()
-        for _, nome in pl_trovate:
+        for _, nome in self.ordina(pl_trovate):
             self.Crea_riga(nome)
+
+    def ordina(self, playlist):
+        salva_impostazioni(self.json_main, self.ordine)
+
+        if self.ordine == "creazione_asc":
+            return sorted(playlist)
+        elif self.ordine == "creazione_desc":
+            return sorted(playlist, reverse=True)
+        elif self.ordine == "alfabetico":
+            return sorted(playlist, key=lambda p: p[1].lower())
+        return playlist
 
         
     def Crea_riga(self, nome):
         riga = QPushButton(nome)
         riga.setObjectName("playlist_bt")
         riga.setFixedHeight(70)
-        self.PlayList_box.insertWidget(0, riga)
+        self.PlayList_box.insertWidget(len(self.righe), riga)
+        self.righe.append(riga)
         
 
 if __name__ == "__main__":

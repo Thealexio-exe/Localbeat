@@ -115,15 +115,24 @@ QLabel#side_title_bt {
 
 QPushButton#bt_ordine {
     background-color: transparent;
+    border: 1px solid #353535;
     color: #cccccc;
-    border: none;
     border-radius: 6px;
     text-align: left;
     padding: 8px 12px;
-    font-size: 10pt;
+    font-size: 11pt;
 }
 
 QPushButton#bt_ordine:hover {
     background-color: #3b3a3a;
     color: white;
+}
+
+QPushButton#bt_ordine:checked {
+    background-color: #e6e6e6;
+    color: #202020;
+}
+
+QPushButton#bt_ordine:disabled {
+    color: #666666;
 }

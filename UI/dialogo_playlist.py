@@ -72,7 +72,7 @@ class PlaylistDialog(QDialog):
         return self.campo_nome.text().strip()
 
     def inserisci_file(self):
-        percorsi, _ = QFileDialog.getOpenFileNames(self, "Scegli i file", "", "Audio (*.mp3 *.mp4 *.wav *.flac *.ogg);;Tutti i file (*)")
+        percorsi, _ = QFileDialog.getOpenFileNames(self, "Scegli i file", "", "Audio (*.mp3 *.wav *.flac *.ogg);;Tutti i file (*)")
 
         for per in percorsi:
             if per not in self.file_scelti:

@@ -18,3 +18,19 @@ def leggi_json(posizione):
     except (OSError, json.JSONDecodeError) as er:
         print(er)
         return None
+
+def carica_impostazioni(posizione):
+    try:
+        dati = json.loads(posizione.read_text(encoding="utf-8"))
+        return dati.get("scelta_ordinamento_pl")
+    except OSError, json.JSONDecodeError:
+        return None
+
+def salva_impostazioni(posizione, testo):
+    try:
+        dati = json.loads(posizione.read_text(encoding="utf-8"))
+
+        dati["scelta_ordinamento_pl"] = testo
+        posizione.write_text(json.dumps(dati, ensure_ascii=False, indent=2))
+    except OSError:
+        return None
