@@ -1,0 +1,16 @@
+QMainWindow {
+    background-color: #202020;
+}
+
+QWidget {
+    background-color: #202020;
+}
+
+QStackedWidget {
+    background-color: #202020;
+}
+
+QScrollArea {
+    background-color: #202020;
+    border: none;
+}
