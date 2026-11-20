@@ -2,8 +2,8 @@ from PySide6.QtWidgets import (QApplication, QMessageBox, QScrollArea, QMainWind
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QIcon
 from pathlib import Path
-from dialogo_playlist import PlaylistDialog
-from File_json import crea_json, leggi_json
+from logic.File_json import crea_json, leggi_json
+from UI.dialogo_playlist import PlaylistDialog
 import sys
 
 class MainFrame(QMainWindow):
@@ -14,8 +14,9 @@ class MainFrame(QMainWindow):
         icon_online = Path(__file__).parent / "asset" / "icon" / "online.svg"
         icon_offline = Path(__file__).parent / "asset" / "icon" / "offline.svg"
         ico_main = Path(__file__).parent / "asset" / "ico" / "offline.ico"
-        self.playlists_dir = Path(__file__).parent / "playlist"
-        self.playlists_dir.mkdir(exist_ok=True)
+        json_main = Path(__file__).parent / "data" / "main_json.json"
+        self.playlists_dir = Path(__file__).parent / "data" / "playlist"
+        self.playlists_dir.mkdir(parents=True, exist_ok=True)
 
         style_path = Path(__file__).parent / "style"
 
@@ -98,9 +99,9 @@ class MainFrame(QMainWindow):
 
         # seconda pagina || pagina home-Playlist 
         self.Play_list_pg = QWidget()
-        page_layout = QVBoxLayout(self.Play_list_pg)
+        page_layout = QHBoxLayout(self.Play_list_pg)
 
-        
+        # scroll area
         lista = QWidget()
         self.PlayList_box = QVBoxLayout(lista)
 
@@ -108,7 +109,37 @@ class MainFrame(QMainWindow):
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setWidget(lista)
-        page_layout.addWidget(scroll)
+
+        # menu a sinistra, rimove la scroll area
+        self.side_menu = QFrame()
+        self.side_menu.setObjectName("side_menu")
+        self.side_menu.setFixedWidth(300)
+        side_layout = QVBoxLayout(self.side_menu)
+
+        box_ordine_bt = QFrame()
+        box_ordine_bt.setObjectName("menu_box_bt")
+        box_ord_layout = QVBoxLayout(box_ordine_bt)
+
+        titolo_Mn_ordine = QLabel("Ordina PlayList per:")
+        titolo_Mn_ordine.setObjectName("side_title_bt")
+        box_ord_layout.addWidget(titolo_Mn_ordine)
+
+        self.bt_ordine = {}
+        for testo, chiave in (("Data di creazione (crescente)", "creazione_asc"),
+                      ("Data di creazione (decresciente)", "creazione_desc"),
+                      ("Ordine alfabetico", "alfabetico"),
+                      ("Ultimo ascolto", "ultimo_ascolto")):
+            bt = QPushButton(testo)
+            bt.setObjectName("bt_ordine")
+            box_ord_layout.addWidget(bt)
+            self.bt_ordine[chiave] = bt
+
+        side_layout.addWidget(box_ordine_bt)
+        side_layout.addStretch()
+
+        # qui divido lo scroll con la pagina accanto
+        page_layout.addWidget(self.side_menu)
+        page_layout.addWidget(scroll, 1)
 
         self.stack.addWidget(self.Play_list_pg)
         

@@ -91,3 +91,39 @@ QPushButton#playlist_bt {
 QPushButton#add_playlist:hover, QPushButton#playlist_bt:hover {
     background-color: #444444;
 }
+
+QFrame#side_menu {
+    background-color: #1f1f1f;
+    border: 1px solid #333333;
+    border-radius: 20px;
+}
+
+QFrame#menu_box_bt {
+    background-color: #2b2b2b;
+    border-radius: 12px;
+}
+
+QLabel#side_title_bt {
+    color: white;
+    background-color: transparent;
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 6px 12px;
+}
+
+/*grafica dei pulsanti, quelli  per ordinare le cose, le playlist*/
+
+QPushButton#bt_ordine {
+    background-color: transparent;
+    color: #cccccc;
+    border: none;
+    border-radius: 6px;
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 10pt;
+}
+
+QPushButton#bt_ordine:hover {
+    background-color: #3b3a3a;
+    color: white;
+}
